@@ -1,0 +1,60 @@
+[
+ {
+  "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+  "InstLine" : 6,
+  "InstName" : "forklift_top",
+  "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+  "ModuleLine" : 6,
+  "ModuleName" : "forklift_top",
+  "SubInsts" : [
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 73,
+    "InstName" : "u_quad",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/quad_decoder.v",
+    "ModuleLine" : 12,
+    "ModuleName" : "quad_decoder"
+   },
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 83,
+    "InstName" : "u_spi",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/spi_slave.v",
+    "ModuleLine" : 20,
+    "ModuleName" : "spi_slave"
+   },
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 103,
+    "InstName" : "u_pid",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/pid_controller.v",
+    "ModuleLine" : 17,
+    "ModuleName" : "pid_controller"
+   },
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 116,
+    "InstName" : "u_limits",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/soft_limits.v",
+    "ModuleLine" : 17,
+    "ModuleName" : "soft_limits"
+   },
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 129,
+    "InstName" : "u_pwm",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/pwm_gen.v",
+    "ModuleLine" : 18,
+    "ModuleName" : "pwm_gen"
+   },
+   {
+    "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
+    "InstLine" : 140,
+    "InstName" : "u_uart",
+    "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/uart_tx.v",
+    "ModuleLine" : 6,
+    "ModuleName" : "uart_tx"
+   }
+  ]
+ }
+]
