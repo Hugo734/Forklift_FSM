@@ -9,7 +9,7 @@
   "SubInsts" : [
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 73,
+    "InstLine" : 53,
     "InstName" : "u_quad",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/quad_decoder.v",
     "ModuleLine" : 12,
@@ -17,7 +17,7 @@
    },
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 83,
+    "InstLine" : 63,
     "InstName" : "u_spi",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/spi_slave.v",
     "ModuleLine" : 20,
@@ -25,7 +25,7 @@
    },
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 103,
+    "InstLine" : 83,
     "InstName" : "u_pid",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/pid_controller.v",
     "ModuleLine" : 17,
@@ -33,7 +33,7 @@
    },
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 116,
+    "InstLine" : 96,
     "InstName" : "u_limits",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/soft_limits.v",
     "ModuleLine" : 17,
@@ -41,7 +41,7 @@
    },
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 129,
+    "InstLine" : 109,
     "InstName" : "u_pwm",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/pwm_gen.v",
     "ModuleLine" : 18,
@@ -49,7 +49,7 @@
    },
    {
     "InstFile" : "/home/champagnepapi/Documents/forklift/forklift/forklift_top.v",
-    "InstLine" : 140,
+    "InstLine" : 120,
     "InstName" : "u_uart",
     "ModuleFile" : "/home/champagnepapi/Documents/forklift/forklift/uart_tx.v",
     "ModuleLine" : 6,

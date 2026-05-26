@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tang Nano 20K — Asignación de pines final</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --bg:#0e1117; --s:#161b25; --s2:#1c2235; --b:#2a3045; --b2:#3a4260;
+    --ink:#e2e8f4; --ink2:#8a94aa; --ink3:#4a5268;
+    --red:#e74c3c; --brown:#a0522d; --green:#2ecc71; --blue:#3498db;
+    --white2:#dce3ef; --purple:#9b59b6; --teal:#1abc9c; --orange:#e67e22;
+    --yellow:#f1c40f; --cyan:#00bcd4;
+  }
+  body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;padding:28px 20px 56px;}
+  header{border-top:3px solid var(--teal);padding-top:12px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;}
+  header h1{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);}
+  header span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink3);}
+  .wrap{background:var(--s);border:1px solid var(--b);border-radius:8px;padding:24px 16px;overflow-x:auto;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px;}
+  .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:14px;}
+  @media(max-width:700px){.grid2,.grid3{grid-template-columns:1fr;}}
+  .card{background:var(--s);border:1px solid var(--b);border-radius:6px;padding:14px 16px;}
+  .card h3{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding-bottom:7px;border-bottom:1px solid var(--b);margin-bottom:9px;}
+  .tr{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--b);font-size:12px;}
+  .tr:last-child{border-bottom:none;}
+  .pin-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;flex-shrink:0;min-width:52px;text-align:center;}
+  .dir{font-size:10px;color:var(--ink3);flex-shrink:0;width:28px;text-align:center;}
+  .note{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--b);font-size:11px;line-height:1.5;}
+  .note:last-child{border-bottom:none;}
+  .nn{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;color:var(--ink3);flex-shrink:0;}
+  .warn{background:#1a1000;border:1px solid #5a3a00;border-radius:4px;padding:10px 14px;font-size:12px;margin-top:12px;line-height:1.6;}
+  footer{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);text-align:right;border-top:1px solid var(--b);padding-top:8px;margin-top:14px;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Tang Nano 20K — Asignación de pines para L298N + Encoder + UART Jetson</h1>
+  <span>GW2AR-18 QN88 · Todos los GPIO a 3.3V · BANK0/BANK3 preferidos</span>
+</header>
+
+<div class="wrap">
+<svg viewBox="0 0 980 560" width="100%" xmlns="http://www.w3.org/2000/svg" style="font-family:'IBM Plex Mono',monospace; overflow:visible;">
+<defs>
+  <marker id="ao" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#e67e22"/></marker>
+  <marker id="ag" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#2ecc71"/></marker>
+  <marker id="at" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#1abc9c"/></marker>
+  <marker id="abl" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#3498db"/></marker>
+  <marker id="aw" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#dce3ef"/></marker>
+  <marker id="ac" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#00bcd4"/></marker>
+  <marker id="ay" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#f1c40f"/></marker>
+  <marker id="ar" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#e74c3c"/></marker>
+  <marker id="ak" viewBox="0 0 8 6" refX="7" refY="3" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L8 3L0 6Z" fill="#888"/></marker>
+</defs>
+
+<!-- ═══ BOARD BODY ═══ -->
+<!-- PCB base -->
+<rect x="340" y="20" width="300" height="520" rx="10" fill="#0d1a0d" stroke="#1e3a1e" stroke-width="2"/>
+<!-- USB-C top -->
+<rect x="410" y="10" width="160" height="26" rx="4" fill="#555" stroke="#333" stroke-width="1"/>
+<text x="490" y="27" font-size="8" fill="#aaa" text-anchor="middle">USB-C (5V · GND)</text>
+<!-- USB-C bottom -->
+<rect x="410" y="504" width="160" height="26" rx="4" fill="#555" stroke="#333" stroke-width="1"/>
+<text x="490" y="521" font-size="8" fill="#aaa" text-anchor="middle">USB-C</text>
+<!-- chip -->
+<rect x="400" y="180" width="180" height="180" rx="4" fill="#111" stroke="#333" stroke-width="1.5"/>
+<text x="490" y="258" font-size="11" fill="#aaa" text-anchor="middle" font-weight="700" letter-spacing="1">GW2AR-18</text>
+<text x="490" y="274" font-size="8" fill="#555" text-anchor="middle">QN88C8/I7</text>
+<text x="490" y="290" font-size="8" fill="#555" text-anchor="middle">NA3K60.00</text>
+<text x="490" y="310" font-size="8" fill="#333" text-anchor="middle">BANK0 · BANK3</text>
+<text x="490" y="324" font-size="8" fill="#333" text-anchor="middle">todos 3.3V</text>
+
+<!-- LED0 indicator -->
+<circle cx="490" cy="160" r="5" fill="#2ecc71" opacity="0.6"/>
+<text x="500" y="164" font-size="7" fill="#2ecc71">LED0 pin15</text>
+
+<!-- ═══ POWER PINS (esquinas) ═══ -->
+<!-- 5V top right -->
+<rect x="640" y="36" width="30" height="14" rx="2" fill="#e74c3c"/>
+<text x="655" y="47" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">5V</text>
+<line x1="640" y1="43" x2="610" y2="43" stroke="#e74c3c" stroke-width="1.5"/>
+<!-- GND top right -->
+<rect x="640" y="54" width="30" height="14" rx="2" fill="#333"/>
+<text x="655" y="65" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">GND</text>
+<line x1="640" y1="61" x2="610" y2="61" stroke="#888" stroke-width="1.5"/>
+<!-- 3.3V bottom right -->
+<rect x="640" y="388" width="30" height="14" rx="2" fill="#e67e22"/>
+<text x="655" y="399" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">3V3</text>
+<line x1="640" y1="395" x2="610" y2="395" stroke="#e67e22" stroke-width="1.5"/>
+<!-- GND bottom right -->
+<rect x="640" y="366" width="30" height="14" rx="2" fill="#333"/>
+<text x="655" y="377" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">GND</text>
+<line x1="640" y1="373" x2="610" y2="373" stroke="#888" stroke-width="1.5"/>
+<!-- 3.3V bottom left -->
+<rect x="310" y="456" width="30" height="14" rx="2" fill="#e67e22"/>
+<text x="325" y="467" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">3V3</text>
+<line x1="340" y1="463" x2="310" y2="463" stroke="#e67e22" stroke-width="1.5"/>
+<!-- GND bottom left -->
+<rect x="310" y="474" width="30" height="14" rx="2" fill="#333"/>
+<text x="325" y="485" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">GND</text>
+<line x1="340" y1="481" x2="310" y2="481" stroke="#888" stroke-width="1.5"/>
+
+<!-- ═══ PINES LADO DERECHO (asignados) ═══ -->
+<!-- Pin 76 IOT30B → libre -->
+<!-- Pin 80 IOT27A → libre -->
+
+<!-- PIN 72: IOT40B → ENA (PWM velocidad) -->
+<rect x="640" y="408" width="30" height="14" rx="2" fill="#2ecc71"/>
+<text x="655" y="419" font-size="8" fill="#000" text-anchor="middle" font-weight="700">72</text>
+<line x1="640" y1="415" x2="610" y2="415" stroke="#2ecc71" stroke-width="1.5"/>
+<text x="636" y="413" font-size="7" fill="#2ecc71" text-anchor="end">IOT40B</text>
+
+<!-- PIN 71: IOT44A → IN1 (dirección) -->
+<rect x="640" y="426" width="30" height="14" rx="2" fill="#1abc9c"/>
+<text x="655" y="437" font-size="8" fill="#000" text-anchor="middle" font-weight="700">71</text>
+<line x1="640" y1="433" x2="610" y2="433" stroke="#1abc9c" stroke-width="1.5"/>
+<text x="636" y="431" font-size="7" fill="#1abc9c" text-anchor="end">IOT44A</text>
+
+<!-- PIN 53: IOR38B → IN2 (dirección) -->
+<rect x="640" y="444" width="30" height="14" rx="2" fill="#1abc9c"/>
+<text x="655" y="455" font-size="8" fill="#000" text-anchor="middle" font-weight="700">53</text>
+<line x1="640" y1="451" x2="610" y2="451" stroke="#1abc9c" stroke-width="1.5"/>
+<text x="636" y="449" font-size="7" fill="#1abc9c" text-anchor="end">IOR38B</text>
+
+<!-- PIN 52: IOR39A → ENC_A (input) -->
+<rect x="640" y="462" width="30" height="14" rx="2" fill="#3498db"/>
+<text x="655" y="473" font-size="8" fill="#fff" text-anchor="middle" font-weight="700">52</text>
+<line x1="640" y1="469" x2="610" y2="469" stroke="#3498db" stroke-width="1.5"/>
+<text x="636" y="467" font-size="7" fill="#3498db" text-anchor="end">IOR39A</text>
+
+<!-- PIN 49: IOR49A → ENC_B (input) -->
+<rect x="640" y="480" width="30" height="14" rx="2" fill="#dce3ef"/>
+<text x="655" y="491" font-size="8" fill="#000" text-anchor="middle" font-weight="700">49</text>
+<line x1="640" y1="487" x2="610" y2="487" stroke="#dce3ef" stroke-width="1.5"/>
+<text x="636" y="485" font-size="7" fill="#dce3ef" text-anchor="end">IOR49A</text>
+
+<!-- ═══ PINES LADO IZQUIERDO (asignados) ═══ -->
+
+<!-- PIN 17: IOL49A → UART_TX → Jetson -->
+<rect x="310" y="360" width="30" height="14" rx="2" fill="#00bcd4"/>
+<text x="325" y="371" font-size="8" fill="#000" text-anchor="middle" font-weight="700">17</text>
+<line x1="340" y1="367" x2="310" y2="367" stroke="#00bcd4" stroke-width="1.5"/>
+<text x="344" y="365" font-size="7" fill="#00bcd4">IOL49A TX→</text>
+
+<!-- PIN 20: IOL51B → UART_RX ← Jetson -->
+<rect x="310" y="378" width="30" height="14" rx="2" fill="#00bcd4" opacity="0.7"/>
+<text x="325" y="389" font-size="8" fill="#000" text-anchor="middle" font-weight="700">20</text>
+<line x1="340" y1="385" x2="310" y2="385" stroke="#00bcd4" stroke-width="1.5"/>
+<text x="344" y="383" font-size="7" fill="#00bcd4">IOL51B RX←</text>
+
+<!-- PIN 19: IOL51A → LIBRE -->
+<!-- PIN 18: IOL49B → LIBRE -->
+
+<!-- ═══ LABELS FUNCIONALES EN EL BOARD ═══ -->
+<!-- Right side labels -->
+<text x="736" y="419" font-size="9" fill="#2ecc71" font-weight="700">ENA  →  L298N ENA</text>
+<text x="736" y="431" font-size="8" fill="#2ecc71" opacity="0.7">PWM velocidad motor</text>
+
+<text x="736" y="447" font-size="9" fill="#1abc9c" font-weight="700">IN1  →  L298N IN1</text>
+<text x="736" y="465" font-size="9" fill="#1abc9c" font-weight="700">IN2  →  L298N IN2</text>
+<text x="736" y="477" font-size="8" fill="#1abc9c" opacity="0.7">dirección adelante/atrás</text>
+
+<text x="736" y="493" font-size="9" fill="#3498db" font-weight="700">ENC_A  ←  cable AZUL</text>
+<text x="736" y="505" font-size="9" fill="#dce3ef" font-weight="700">ENC_B  ←  cable BLANCO</text>
+<text x="736" y="517" font-size="8" fill="#4a5268">señales encoder (input)</text>
+
+<!-- Right side power labels -->
+<text x="678" y="47" font-size="8" fill="#e74c3c">← LM2596 #2 (5V in)</text>
+<text x="678" y="65" font-size="8" fill="#888">← GND común</text>
+<text x="678" y="399" font-size="8" fill="#e67e22">→ Enc VCC (café)</text>
+<text x="678" y="377" font-size="8" fill="#888">→ GND encoder (verde)</text>
+
+<!-- Left side labels -->
+<text x="230" y="371" font-size="9" fill="#00bcd4" font-weight="700" text-anchor="end">UART TX  →  Jetson RX</text>
+<text x="230" y="385" font-size="8" fill="#00bcd4" opacity="0.7" text-anchor="end">(pin 8 Jetson GPIO)</text>
+<text x="230" y="399" font-size="9" fill="#00bcd4" font-weight="700" text-anchor="end">UART RX  ←  Jetson TX</text>
+<text x="230" y="413" font-size="8" fill="#00bcd4" opacity="0.7" text-anchor="end">(pin 10 Jetson GPIO)</text>
+
+<!-- Left power labels -->
+<text x="304" y="467" font-size="8" fill="#e67e22" text-anchor="end">3.3V → Enc VCC (café)</text>
+<text x="304" y="485" font-size="8" fill="#888" text-anchor="end">GND común</text>
+
+<!-- ═══ WIRES SALIENDO DEL BOARD ═══ -->
+
+<!-- ENA wire out right -->
+<line x1="670" y1="415" x2="730" y2="415" stroke="#2ecc71" stroke-width="2" stroke-dasharray="5 3" marker-end="url(#ag)"/>
+<!-- IN1 wire out right -->
+<line x1="670" y1="433" x2="730" y2="447" stroke="#1abc9c" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#at)"/>
+<!-- IN2 wire out right -->
+<line x1="670" y1="451" x2="730" y2="465" stroke="#1abc9c" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#at)"/>
+<!-- ENC_A wire out right -->
+<line x1="670" y1="469" x2="730" y2="493" stroke="#3498db" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#abl)"/>
+<!-- ENC_B wire out right -->
+<line x1="670" y1="487" x2="730" y2="505" stroke="#dce3ef" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#aw)"/>
+
+<!-- 3.3V out right (enc VCC) -->
+<line x1="670" y1="395" x2="730" y2="395" stroke="#e67e22" stroke-width="2" marker-end="url(#ao)"/>
+<!-- GND out right (enc GND) -->
+<line x1="670" y1="373" x2="730" y2="373" stroke="#888" stroke-width="2" marker-end="url(#ak)"/>
+
+<!-- 5V in right -->
+<line x1="670" y1="43" x2="730" y2="43" stroke="#e74c3c" stroke-width="2" marker-end="url(#ar)"/>
+<!-- GND in right -->
+<line x1="670" y1="61" x2="730" y2="61" stroke="#888" stroke-width="2" marker-end="url(#ak)"/>
+
+<!-- UART TX/RX out left -->
+<line x1="310" y1="367" x2="226" y2="367" stroke="#00bcd4" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#ac)"/>
+<line x1="310" y1="385" x2="226" y2="399" stroke="#00bcd4" stroke-width="1.8" stroke-dasharray="5 3" marker-end="url(#ac)"/>
+
+<!-- 3.3V enc VCC out left -->
+<line x1="310" y1="463" x2="226" y2="463" stroke="#e67e22" stroke-width="2" marker-end="url(#ao)"/>
+<!-- GND out left -->
+<line x1="310" y1="481" x2="226" y2="481" stroke="#888" stroke-width="2" marker-end="url(#ak)"/>
+
+<!-- ═══ CONSTRAINT FILE BOX ═══ -->
+<rect x="340" y="40" width="300" height="110" rx="4" fill="#0a1a0a" stroke="#1e3a1e" stroke-width="1"/>
+<text x="490" y="58" font-size="9" fill="#2ecc71" text-anchor="middle" font-weight="700" letter-spacing="1">CONSTRAINTS FILE (.cst)</text>
+<line x1="348" y1="64" x2="632" y2="64" stroke="#1e3a1e" stroke-width="1"/>
+<text x="352" y="78" font-size="8" fill="#4a7a4a">IO_LOC "ENA"    72;  IO_PORT "ENA"    IO_TYPE=LVCMOS33;</text>
+<text x="352" y="92" font-size="8" fill="#4a7a4a">IO_LOC "IN1"    71;  IO_PORT "IN1"    IO_TYPE=LVCMOS33;</text>
+<text x="352" y="106" font-size="8" fill="#4a7a4a">IO_LOC "IN2"    53;  IO_PORT "IN2"    IO_TYPE=LVCMOS33;</text>
+<text x="352" y="120" font-size="8" fill="#4a5a7a">IO_LOC "ENC_A"  52;  IO_PORT "ENC_A"  IO_TYPE=LVCMOS33;</text>
+<text x="352" y="134" font-size="8" fill="#4a5a7a">IO_LOC "ENC_B"  49;  IO_PORT "ENC_B"  IO_TYPE=LVCMOS33;</text>
+<text x="352" y="148" font-size="8" fill="#3a6a6a">IO_LOC "UART_TX" 17; IO_PORT "UART_TX" IO_TYPE=LVCMOS33;</text>
+
+<!-- ═══ RESERVED PINS WARNING ═══ -->
+<rect x="340" y="158" width="300" height="18" rx="3" fill="#1a0a00" stroke="#5a3a00" stroke-width="1"/>
+<text x="490" y="171" font-size="8" fill="#f39c12" text-anchor="middle">⚠ Evitar: LED0(15) LED1(16) LED2(17*) LCD DS2 I2S SDIO</text>
+
+</svg>
+</div>
+
+<!-- PIN TABLE -->
+<div class="grid2">
+  <div class="card">
+    <h3 style="color:#2ecc71">Pines de salida — Control L298N</h3>
+    <div class="tr">
+      <span class="pin-badge" style="background:#2ecc71;color:#000">Pin 72</span>
+      <span class="dir">OUT</span>
+      <span><strong>ENA</strong> — IOT40B · BANK3</span>
+      <span style="margin-left:auto;font-size:11px;color:#2ecc71">PWM velocidad</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#1abc9c;color:#000">Pin 71</span>
+      <span class="dir">OUT</span>
+      <span><strong>IN1</strong> — IOT44A · BANK3</span>
+      <span style="margin-left:auto;font-size:11px;color:#1abc9c">dirección</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#1abc9c;color:#000">Pin 53</span>
+      <span class="dir">OUT</span>
+      <span><strong>IN2</strong> — IOR38B · BANK5</span>
+      <span style="margin-left:auto;font-size:11px;color:#1abc9c">dirección</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#3498db">Pines de entrada — Encoder</h3>
+    <div class="tr">
+      <span class="pin-badge" style="background:#3498db;color:#fff">Pin 52</span>
+      <span class="dir">IN</span>
+      <span><strong>ENC_A</strong> — IOR39A · BANK5</span>
+      <span style="margin-left:auto;font-size:11px;color:#3498db">cable azul</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#dce3ef;color:#000">Pin 49</span>
+      <span class="dir">IN</span>
+      <span><strong>ENC_B</strong> — IOR49A · BANK5</span>
+      <span style="margin-left:auto;font-size:11px;color:#dce3ef">cable blanco</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#00bcd4">Pines UART — Comunicación Jetson Nano</h3>
+    <div class="tr">
+      <span class="pin-badge" style="background:#00bcd4;color:#000">Pin 17</span>
+      <span class="dir">OUT</span>
+      <span><strong>UART_TX</strong> — IOL49A · BANK6</span>
+      <span style="margin-left:auto;font-size:11px;color:#00bcd4">→ Jetson RX (pin 10)</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#00bcd4;color:#000" style="opacity:0.7">Pin 20</span>
+      <span class="dir">IN</span>
+      <span><strong>UART_RX</strong> — IOL51B · BANK6</span>
+      <span style="margin-left:auto;font-size:11px;color:#00bcd4">← Jetson TX (pin 8)</span>
+    </div>
+    <div class="note" style="margin-top:6px">
+      <span class="nn">⚠</span>
+      <span>La Jetson usa <strong>3.3V</strong> en sus GPIO — directamente compatible con el Tang Nano. Sin level shifter.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 style="color:#e67e22">Pines de alimentación</h3>
+    <div class="tr">
+      <span class="pin-badge" style="background:#e74c3c;color:#fff">5V</span>
+      <span class="dir">IN</span>
+      <span>Pin 5V — esquina superior derecha</span>
+      <span style="margin-left:auto;font-size:11px;color:#e74c3c">LM2596 #2</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#333;color:#aaa">GND</span>
+      <span class="dir">—</span>
+      <span>Pin GND — junto al 5V</span>
+      <span style="margin-left:auto;font-size:11px;color:#888">GND común</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#e67e22;color:#000">3.3V</span>
+      <span class="dir">OUT</span>
+      <span>Pin 3V3 — esquina inferior derecha</span>
+      <span style="margin-left:auto;font-size:11px;color:#e67e22">→ cable café (Enc VCC)</span>
+    </div>
+    <div class="tr">
+      <span class="pin-badge" style="background:#333;color:#aaa">GND</span>
+      <span class="dir">—</span>
+      <span>Pin GND — junto al 3V3</span>
+      <span style="margin-left:auto;font-size:11px;color:#888">→ cable verde (Enc GND)</span>
+    </div>
+  </div>
+</div>
+
+<!-- CONSTRAINTS FILE -->
+<div class="card" style="margin-top:14px">
+  <h3 style="color:#2ecc71">Archivo de constraints completo (.cst) — pegar en Gowin IDE</h3>
+  <pre style="font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.8;color:#8a94aa;background:#0d1117;padding:14px;border-radius:4px;overflow-x:auto;">
+<span style="color:#4a5268">// ── Control motor L298N ──────────────────────────────</span>
+<span style="color:#2ecc71">IO_LOC  "ENA"     72;</span>  <span style="color:#2ecc71">IO_PORT "ENA"     IO_TYPE=LVCMOS33 DRIVE=8;</span>
+<span style="color:#1abc9c">IO_LOC  "IN1"     71;</span>  <span style="color:#1abc9c">IO_PORT "IN1"     IO_TYPE=LVCMOS33 DRIVE=8;</span>
+<span style="color:#1abc9c">IO_LOC  "IN2"     53;</span>  <span style="color:#1abc9c">IO_PORT "IN2"     IO_TYPE=LVCMOS33 DRIVE=8;</span>
+
+<span style="color:#4a5268">// ── Encoder (entradas) ───────────────────────────────</span>
+<span style="color:#3498db">IO_LOC  "ENC_A"   52;</span>  <span style="color:#3498db">IO_PORT "ENC_A"   IO_TYPE=LVCMOS33 PULL_MODE=UP;</span>
+<span style="color:#dce3ef">IO_LOC  "ENC_B"   49;</span>  <span style="color:#dce3ef">IO_PORT "ENC_B"   IO_TYPE=LVCMOS33 PULL_MODE=UP;</span>
+
+<span style="color:#4a5268">// ── UART hacia Jetson ────────────────────────────────</span>
+<span style="color:#00bcd4">IO_LOC  "UART_TX" 17;</span>  <span style="color:#00bcd4">IO_PORT "UART_TX" IO_TYPE=LVCMOS33 DRIVE=8;</span>
+<span style="color:#00bcd4">IO_LOC  "UART_RX" 20;</span>  <span style="color:#00bcd4">IO_PORT "UART_RX" IO_TYPE=LVCMOS33 PULL_MODE=UP;</span>
+  </pre>
+</div>
+
+<div class="warn">
+  <strong style="color:#f39c12">⚠ Pines a NO usar:</strong> &nbsp;
+  <span style="color:#e67e22">LED0=15 · LED1=16 · LED2=17(tomado) · LED3=18 · LED4=19 · LED5=20(tomado)</span> — los LEDs onboard están en estos pines pero pueden usarse si no necesitas los LEDs. Los pines DS2_* (joystick), LCD_*, I2S_*, SDIO_* también están mapeados a funciones onboard.
+</div>
+
+<footer>Tang Nano 20K GW2AR-18 · Sipeed · Constraints LVCMOS33 · BANK0/3/5/6 · Gowin IDE V1.9.8+</footer>
+</body>
+</html>

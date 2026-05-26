@@ -1,0 +1,28 @@
+forklift_driver:
+  ros__parameters:
+
+    # SPI bus to the Tang Nano FPGA
+    spi_bus:    0      # /dev/spidev0.x
+    spi_device: 0      # /dev/spidevx.0
+    spi_speed:  500000 # Hz — keep ≤ 1 MHz for reliable Jetson GPIO
+
+    # Position poll rate
+    poll_hz: 10.0
+
+    # ── Named position counts ──────────────────────────────────────────
+    # Calibrate by running: python3 forklift_spi.py  (calibrate() routine)
+    # Then set these to the measured encoder counts for each height.
+    #
+    #   LOW  = fork fully down (floor level, also the encoder zero)
+    #   MID  = transport / carry height
+    #   HIGH = top of travel (max rack height)
+    counts_low:  0
+    counts_mid:  300
+    counts_high: 600
+
+    # ── PID gains (Q8 fixed-point: real = value / 256) ─────────────────
+    # Sent to FPGA once at startup.  Re-send at runtime via /forklift/gains.
+    # Start here, increase Kp if response is sluggish, add Kd if it oscillates.
+    kp: 50   # proportional  → 50/256 ≈ 0.20
+    ki:  5   # integral      →  5/256 ≈ 0.02
+    kd: 10   # derivative    → 10/256 ≈ 0.04

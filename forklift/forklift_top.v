@@ -48,26 +48,6 @@ wire               at_top, at_bottom;
 
 wire pos_rst_n = rst_n && !reset_pos_cmd;
 
-// ── Auto jog test: 2s UP then 2s DOWN, repeating ─────────────
-localparam JOG_CYCLES = 26'd54_000_000; // 2s @ 27MHz
-reg [25:0] jog_cnt;
-reg        jog_dir; // 0 = UP, 1 = DOWN
-
-always @(posedge clk or negedge rst_n) begin
-    if (!rst_n) begin
-        jog_cnt <= 0;
-        jog_dir <= 0;
-    end else begin
-        if (jog_cnt >= JOG_CYCLES - 1) begin
-            jog_cnt <= 0;
-            jog_dir <= ~jog_dir;
-        end else begin
-            jog_cnt <= jog_cnt + 1'b1;
-        end
-    end
-end
-
-wire signed [12:0] motor_cmd = jog_dir ? -13'sd2000 : 13'sd2000;
 
 // ── Quadrature decoder ────────────────────────────────────────
 quad_decoder u_quad (
@@ -117,7 +97,7 @@ soft_limits u_limits (
     .clk       (clk),
     .rst_n     (rst_n),
     .position  (position),
-    .pid_out   (motor_cmd),
+    .pid_out   (pid_out),
     .limit_hi  (limit_hi),
     .limit_lo  (limit_lo),
     .limit_hit (limit_hit),
@@ -129,8 +109,8 @@ soft_limits u_limits (
 pwm_gen u_pwm (
     .clk       (clk),
     .rst_n     (rst_n),
-    .pid_out   (motor_cmd),
-    .limit_hit (1'b0),
+    .pid_out   (pid_out),
+    .limit_hit (limit_hit),
     .ena       (ena),
     .in1       (in1),
     .in2       (in2)

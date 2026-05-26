@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 """
-forklift_driver.py  —  ROS2 node that bridges SPI ↔ FPGA motor controller
+forklift_driver.py  —  ROS2 node: Jetson → FPGA forklift controller via SPI
 
-Subscribed topics:
-  /forklift/target_pos  (std_msgs/Int32)            — move fork to encoder count
-  /forklift/gains       (std_msgs/Int32MultiArray)  — [Kp, Ki, Kd] Q8 values 0-255
-  /forklift/limits      (std_msgs/Int32MultiArray)  — [lo_count, hi_count]
-  /forklift/reset_pos   (std_msgs/Empty)            — zero the encoder now
+High-level interface (what the rest of the robot sees):
+  /lifter_cmd   (std_msgs/UInt8)   — 0=LOW  1=MID  2=HIGH
+  /lifter_status (std_msgs/UInt8)  — current level (same encoding), 10 Hz
 
-Published topics:
-  /forklift/position    (std_msgs/Int32)            — current position @ 10 Hz
+Low-level interface (direct tuning / calibration):
+  /forklift/gains   (std_msgs/Int32MultiArray) — [Kp, Ki, Kd]  Q8 (0-255)
+  /forklift/limits  (std_msgs/Int32MultiArray) — [lo_counts, hi_counts]
+  /forklift/reset_pos (std_msgs/Empty)         — zero encoder now
 
-SPI frame (24-bit, Mode 0, 500 kHz):
+SPI frame to FPGA (24-bit, Mode 0):
   [23:16] CMD byte
   [15:0]  VALUE signed 16-bit
 
-Run on Jetson Nano:
-  ros2 run forklift_ros2 forklift_driver
+FPGA returns current encoder position (16-bit signed) on every MISO frame.
 """
+
+import time
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int32, Int32MultiArray, Empty
+from std_msgs.msg import UInt8, Int32MultiArray, Empty
 
 import spidev
-import time
 
 
-# ── SPI command constants (must match spi_slave.v) ────────────────────────────
+# ── SPI command bytes (must match spi_slave.v) ────────────────────────────────
 CMD_SET_TARGET   = 0x01
 CMD_SET_KP       = 0x02
 CMD_SET_KI       = 0x03
@@ -37,184 +37,207 @@ CMD_SET_LIMIT_LO = 0x06
 CMD_RESET_POS    = 0x07
 CMD_CALIBRATE    = 0x08
 
+# ── Named lift levels ─────────────────────────────────────────────────────────
+LEVEL_LOW  = 0
+LEVEL_MID  = 1
+LEVEL_HIGH = 2
 
-class ForkliftSPI:
-    """Low-level SPI driver — talks to the FPGA over /dev/spidev0.0."""
 
-    def __init__(self, bus: int = 0, device: int = 0, speed_hz: int = 500_000):
+class FpgaSpi:
+    """Thin wrapper around spidev that speaks the 24-bit forklift protocol."""
+
+    def __init__(self, bus: int, device: int, speed_hz: int) -> None:
         self.spi = spidev.SpiDev()
         self.spi.open(bus, device)
         self.spi.max_speed_hz = speed_hz
-        self.spi.mode = 0           # CPOL=0, CPHA=0  — matches spi_slave.v
+        self.spi.mode = 0
         self.spi.bits_per_word = 8
         self.spi.no_cs = False
-        self._target = 0            # cached so read_position() is a true no-op
+        self._last_target: int = 0
 
     def _send(self, cmd: int, value: int) -> int:
-        """
-        Send one 24-bit SPI frame and return the 16-bit position MISO readback.
-        The FPGA shifts out pos_readback[15:0] simultaneously with receiving cmd+value.
-        """
+        """Send 24-bit frame, return 16-bit signed position from MISO."""
         value = max(-32768, min(32767, int(value)))
-        val_u16 = value & 0xFFFF
-        frame = [cmd, (val_u16 >> 8) & 0xFF, val_u16 & 0xFF]
-        resp = self.spi.xfer2(frame)
-        raw = (resp[1] << 8) | resp[2]
-        if raw >= 0x8000:           # sign-extend from 16-bit
-            raw -= 0x10000
-        return raw
+        v = value & 0xFFFF
+        rx = self.spi.xfer2([cmd, (v >> 8) & 0xFF, v & 0xFF])
+        raw = (rx[1] << 8) | rx[2]
+        return raw - 0x10000 if raw >= 0x8000 else raw
 
     def set_target(self, counts: int) -> int:
-        self._target = counts
+        self._last_target = counts
         return self._send(CMD_SET_TARGET, counts)
 
-    def set_kp(self, kp: int):
-        self._send(CMD_SET_KP, kp & 0xFF)
-
-    def set_ki(self, ki: int):
-        self._send(CMD_SET_KI, ki & 0xFF)
-
-    def set_kd(self, kd: int):
-        self._send(CMD_SET_KD, kd & 0xFF)
-
-    def set_limit_hi(self, hi: int):
-        self._send(CMD_SET_LIMIT_HI, hi)
-
-    def set_limit_lo(self, lo: int):
-        self._send(CMD_SET_LIMIT_LO, lo)
-
-    def reset_position(self):
-        self._send(CMD_RESET_POS, 0)
-
     def read_position(self) -> int:
-        # Re-send current target — FPGA echoes position on MISO, no state changes
-        return self._send(CMD_SET_TARGET, self._target)
+        return self._send(CMD_SET_TARGET, self._last_target)
 
-    def close(self):
+    def set_kp(self, v: int) -> None: self._send(CMD_SET_KP, v & 0xFF)
+    def set_ki(self, v: int) -> None: self._send(CMD_SET_KI, v & 0xFF)
+    def set_kd(self, v: int) -> None: self._send(CMD_SET_KD, v & 0xFF)
+    def set_limit_hi(self, v: int) -> None: self._send(CMD_SET_LIMIT_HI, v)
+    def set_limit_lo(self, v: int) -> None: self._send(CMD_SET_LIMIT_LO, v)
+    def reset_position(self) -> None: self._send(CMD_RESET_POS, 0)
+
+    def close(self) -> None:
         self.spi.close()
 
 
-# ── ROS2 Node ─────────────────────────────────────────────────────────────────
-
 class ForkliftDriverNode(Node):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__('forklift_driver')
 
-        # Declare parameters so they can be set from the launch file or CLI
+        # ── Parameters ────────────────────────────────────────────────────────
         self.declare_parameter('spi_bus',    0)
         self.declare_parameter('spi_device', 0)
         self.declare_parameter('spi_speed',  500_000)
         self.declare_parameter('poll_hz',    10.0)
+
+        # Named position counts — tune these after running calibration
+        self.declare_parameter('counts_low',  0)
+        self.declare_parameter('counts_mid',  300)
+        self.declare_parameter('counts_high', 600)
+
+        # PID gains sent to FPGA on startup (Q8 format: real = value/256)
+        self.declare_parameter('kp', 50)
+        self.declare_parameter('ki',  5)
+        self.declare_parameter('kd', 10)
 
         bus    = self.get_parameter('spi_bus').value
         device = self.get_parameter('spi_device').value
         speed  = self.get_parameter('spi_speed').value
         hz     = self.get_parameter('poll_hz').value
 
-        self.spi = ForkliftSPI(bus, device, speed)
+        self._counts = {
+            LEVEL_LOW:  self.get_parameter('counts_low').value,
+            LEVEL_MID:  self.get_parameter('counts_mid').value,
+            LEVEL_HIGH: self.get_parameter('counts_high').value,
+        }
+
+        self._current_level: int = LEVEL_LOW
+
+        # ── SPI ───────────────────────────────────────────────────────────────
+        self._spi = FpgaSpi(bus, device, speed)
         self.get_logger().info(f'SPI open: /dev/spidev{bus}.{device} @ {speed} Hz')
+
+        # Push initial gains and limits to the FPGA
+        self._configure_fpga()
 
         # ── Subscribers ───────────────────────────────────────────────────────
 
-        self.create_subscription(
-            Int32,
-            '/forklift/target_pos',
-            self._cb_target,
-            10
-        )
+        # Main command: 0=LOW, 1=MID, 2=HIGH
+        self.create_subscription(UInt8, '/lifter_cmd', self._cb_cmd, 10)
 
+        # Low-level tuning
         self.create_subscription(
-            Int32MultiArray,
-            '/forklift/gains',
-            self._cb_gains,
-            10
-        )
-
+            Int32MultiArray, '/forklift/gains',  self._cb_gains,  10)
         self.create_subscription(
-            Int32MultiArray,
-            '/forklift/limits',
-            self._cb_limits,
-            10
-        )
-
+            Int32MultiArray, '/forklift/limits', self._cb_limits, 10)
         self.create_subscription(
-            Empty,
-            '/forklift/reset_pos',
-            self._cb_reset,
-            10
-        )
+            Empty, '/forklift/reset_pos', self._cb_reset, 10)
 
         # ── Publisher ─────────────────────────────────────────────────────────
+        self._pub_status = self.create_publisher(UInt8, '/lifter_status', 10)
 
-        self.pub_pos = self.create_publisher(Int32, '/forklift/position', 10)
+        # ── Timer ─────────────────────────────────────────────────────────────
+        self.create_timer(1.0 / hz, self._poll)
 
-        # ── Timer: poll position and publish ─────────────────────────────────
+        self.get_logger().info(
+            f'ForkliftDriver ready — LOW={self._counts[0]} '
+            f'MID={self._counts[1]} HIGH={self._counts[2]} counts'
+        )
 
-        self.create_timer(1.0 / hz, self._poll_position)
+    # ── Startup configuration ─────────────────────────────────────────────────
+
+    def _configure_fpga(self) -> None:
+        """Push gains and limits to the FPGA once at startup."""
+        kp = self.get_parameter('kp').value
+        ki = self.get_parameter('ki').value
+        kd = self.get_parameter('kd').value
+        lo = self._counts[LEVEL_LOW]
+        hi = self._counts[LEVEL_HIGH]
+
+        self._spi.set_kp(kp)
+        time.sleep(0.002)
+        self._spi.set_ki(ki)
+        time.sleep(0.002)
+        self._spi.set_kd(kd)
+        time.sleep(0.002)
+        self._spi.set_limit_lo(lo)
+        time.sleep(0.002)
+        self._spi.set_limit_hi(hi)
+        time.sleep(0.002)
+
+        self.get_logger().info(
+            f'FPGA configured: Kp={kp} Ki={ki} Kd={kd} '
+            f'limits=[{lo}, {hi}]'
+        )
 
     # ── Callbacks ─────────────────────────────────────────────────────────────
 
-    def _cb_target(self, msg: Int32):
-        """Move fork to target encoder count."""
-        self.spi.set_target(msg.data)
-        self.get_logger().info(f'Target → {msg.data} counts')
+    def _cb_cmd(self, msg: UInt8) -> None:
+        """Receive HIGH-LEVEL position command: 0=LOW 1=MID 2=HIGH."""
+        level = int(msg.data)
+        if level not in self._counts:
+            self.get_logger().warn(f'Unknown level {level}, use 0/1/2')
+            return
 
-    def _cb_gains(self, msg: Int32MultiArray):
-        """
-        Set PID gains. Expects exactly 3 values: [Kp, Ki, Kd].
-        Values are Q8 fixed-point (0–255). Real gain = value / 256.
-        Publish with:
-          ros2 topic pub /forklift/gains std_msgs/Int32MultiArray \
-            "{data: [50, 5, 10]}"
-        """
+        counts = self._counts[level]
+        self._spi.set_target(counts)
+        self._current_level = level
+
+        names = {0: 'LOW', 1: 'MID', 2: 'HIGH'}
+        self.get_logger().info(f'Moving to {names[level]} ({counts} counts)')
+
+    def _cb_gains(self, msg: Int32MultiArray) -> None:
+        """Re-tune PID gains at runtime: [Kp, Ki, Kd]."""
         if len(msg.data) != 3:
-            self.get_logger().warn('gains needs exactly 3 values: [Kp, Ki, Kd]')
+            self.get_logger().warn('gains needs [Kp, Ki, Kd]')
             return
         kp, ki, kd = msg.data
-        self.spi.set_kp(kp)
-        time.sleep(0.001)
-        self.spi.set_ki(ki)
-        time.sleep(0.001)
-        self.spi.set_kd(kd)
-        self.get_logger().info(f'Gains → Kp={kp} Ki={ki} Kd={kd}')
+        self._spi.set_kp(kp)
+        time.sleep(0.002)
+        self._spi.set_ki(ki)
+        time.sleep(0.002)
+        self._spi.set_kd(kd)
+        self.get_logger().info(f'Gains updated: Kp={kp} Ki={ki} Kd={kd}')
 
-    def _cb_limits(self, msg: Int32MultiArray):
-        """
-        Set soft travel limits. Expects exactly 2 values: [lo, hi] in counts.
-        Publish with:
-          ros2 topic pub /forklift/limits std_msgs/Int32MultiArray \
-            "{data: [0, 600]}"
-        """
+    def _cb_limits(self, msg: Int32MultiArray) -> None:
+        """Update soft travel limits: [lo_counts, hi_counts]."""
         if len(msg.data) != 2:
-            self.get_logger().warn('limits needs exactly 2 values: [lo, hi]')
+            self.get_logger().warn('limits needs [lo, hi]')
             return
         lo, hi = msg.data
-        self.spi.set_limit_lo(lo)
-        time.sleep(0.001)
-        self.spi.set_limit_hi(hi)
-        self.get_logger().info(f'Limits → lo={lo} hi={hi}')
+        self._spi.set_limit_lo(lo)
+        time.sleep(0.002)
+        self._spi.set_limit_hi(hi)
+        self.get_logger().info(f'Limits updated: lo={lo} hi={hi}')
 
-    def _cb_reset(self, _msg: Empty):
-        """Zero the encoder counter at the current physical position."""
-        self.spi.reset_position()
-        self.get_logger().info('Encoder position zeroed')
+    def _cb_reset(self, _: Empty) -> None:
+        """Zero the encoder at the current physical position."""
+        self._spi.reset_position()
+        self.get_logger().info('Encoder zeroed')
 
-    def _poll_position(self):
-        """Read position over SPI and publish it."""
-        pos = self.spi.read_position()
-        out = Int32()
-        out.data = pos
-        self.pub_pos.publish(out)
+    # ── Position polling ──────────────────────────────────────────────────────
 
-    def destroy_node(self):
-        self.spi.close()
+    def _poll(self) -> None:
+        """Read encoder position from FPGA and publish current level."""
+        pos = self._spi.read_position()
+
+        # Derive which named level we are closest to
+        level = min(self._counts, key=lambda k: abs(self._counts[k] - pos))
+
+        msg = UInt8()
+        msg.data = level
+        self._pub_status.publish(msg)
+
+    # ── Cleanup ───────────────────────────────────────────────────────────────
+
+    def destroy_node(self) -> None:
+        self._spi.close()
         super().destroy_node()
 
 
-# ── Entry point ───────────────────────────────────────────────────────────────
-
-def main(args=None):
+def main(args=None) -> None:
     rclpy.init(args=args)
     node = ForkliftDriverNode()
     try:
