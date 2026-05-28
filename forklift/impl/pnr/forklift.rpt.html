@@ -83,7 +83,7 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 </tr>
 <tr>
 <td class="label">Created Time</td>
-<td>Wed May 27 22:39:52 2026
+<td>Thu May 28 00:48:55 2026
 </td>
 </tr>
 <tr>
@@ -97,24 +97,24 @@ table.detail_table th.label {  min-width: 8%; width: 8%; }
 <tr>
 <td class="label">Place & Route Process</td>
 <td>Running placement:
-   Placement Phase 0: CPU time = 0h 0m 0.003s, Elapsed time = 0h 0m 0.003s
-   Placement Phase 1: CPU time = 0h 0m 0.124s, Elapsed time = 0h 0m 0.123s
+   Placement Phase 0: CPU time = 0h 0m 0.004s, Elapsed time = 0h 0m 0.004s
+   Placement Phase 1: CPU time = 0h 0m 0.123s, Elapsed time = 0h 0m 0.122s
    Placement Phase 2: CPU time = 0h 0m 0.004s, Elapsed time = 0h 0m 0.004s
-   Placement Phase 3: CPU time = 0h 0m 0.249s, Elapsed time = 0h 0m 0.247s
-   Total Placement: CPU time = 0h 0m 0.38s, Elapsed time = 0h 0m 0.377s
+   Placement Phase 3: CPU time = 0h 0m 0.212s, Elapsed time = 0h 0m 0.21s
+   Total Placement: CPU time = 0h 0m 0.343s, Elapsed time = 0h 0m 0.34s
 Running routing:
    Routing Phase 0: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-   Routing Phase 1: CPU time = 0h 0m 0.064s, Elapsed time = 0h 0m 0.063s
-   Routing Phase 2: CPU time = 0h 0m 0.079s, Elapsed time = 0h 0m 0.077s
+   Routing Phase 1: CPU time = 0h 0m 0.072s, Elapsed time = 0h 0m 0.072s
+   Routing Phase 2: CPU time = 0h 0m 0.082s, Elapsed time = 0h 0m 0.079s
    Routing Phase 3: CPU time = 0h 0m 0s, Elapsed time = 0h 0m 0s
-   Total Routing: CPU time = 0h 0m 0.143s, Elapsed time = 0h 0m 0.14s
+   Total Routing: CPU time = 0h 0m 0.154s, Elapsed time = 0h 0m 0.151s
 Generate output files:
-   CPU time = 0h 0m 0.508s, Elapsed time = 0h 0m 0.503s
+   CPU time = 0h 0m 0.525s, Elapsed time = 0h 0m 0.522s
 </td>
 </tr>
 <tr>
 <td class="label">Total Time and Memory Usage</td>
-<td>CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s, Peak memory usage = 816MB</td>
+<td>CPU time = 0h 0m 1s, Elapsed time = 0h 0m 1s, Peak memory usage = 833MB</td>
 </tr>
 </table>
 <br/>
@@ -129,12 +129,12 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">Logic</td>
-<td>115/20736</td>
+<td>128/20736</td>
 <td><1%</td>
 </tr>
 <tr>
 <td class="label">&nbsp &nbsp --LUT,ALU,ROM16</td>
-<td>115(89 LUT, 26 ALU, 0 ROM16)</td>
+<td>128(88 LUT, 40 ALU, 0 ROM16)</td>
 <td>-</td>
 </tr>
 <tr>
@@ -144,7 +144,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">Register</td>
-<td>63/15750</td>
+<td>42/15750</td>
 <td><1%</td>
 </tr>
 <tr>
@@ -154,7 +154,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">&nbsp &nbsp --Logic Register as FF</td>
-<td>63/15552</td>
+<td>42/15552</td>
 <td><1%</td>
 </tr>
 <tr>
@@ -169,22 +169,22 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">CLS</td>
-<td>68/10368</td>
+<td>70/10368</td>
 <td><1%</td>
 </tr>
 <tr>
 <td class="label">I/O Port</td>
-<td>2/66</td>
-<td>4%</td>
+<td>4/66</td>
+<td>7%</td>
 </tr>
 <tr>
 <td class="label">I/O Buf</td>
-<td>2</td>
+<td>4</td>
 <td>-</td>
 </tr>
 <tr>
 <td class="label"> &nbsp &nbsp --Input Buf</td>
-<td>1</td>
+<td>3</td>
 <td>-</td>
 </tr>
 <tr>
@@ -218,7 +218,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">bank 3</td>
-<td>0/17</td><td>0%</td>
+<td>2/17</td><td>12%</td>
 </tr>
 <tr>
 <td class="label">bank 4</td>
@@ -272,7 +272,7 @@ Generate output files:
 <tr>
 <td class="label">clk_d</td>
 <td>PRIMARY</td>
-<td> TR TL BR BL</td>
+<td> TR TL</td>
 </tr>
 </table>
 <br/>
@@ -305,6 +305,44 @@ Generate output files:
 <td>in</td>
 <td>IOL7[A]</td>
 <td>LPLL1_T_in</td>
+<td>LVCMOS33</td>
+<td>NA</td>
+<td>UP</td>
+<td>ON</td>
+<td>NONE</td>
+<td>NA</td>
+<td>NA</td>
+<td>OFF</td>
+<td>NA</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td class="label">btn_cw</td>
+<td>-</td>
+<td>88/3</td>
+<td>Y</td>
+<td>in</td>
+<td>IOR30[A]</td>
+<td>MODE0</td>
+<td>LVCMOS33</td>
+<td>NA</td>
+<td>UP</td>
+<td>ON</td>
+<td>NONE</td>
+<td>NA</td>
+<td>NA</td>
+<td>OFF</td>
+<td>NA</td>
+<td>3.3</td>
+</tr>
+<tr>
+<td class="label">btn_ccw</td>
+<td>-</td>
+<td>87/3</td>
+<td>Y</td>
+<td>in</td>
+<td>IOR30[B]</td>
+<td>MODE1</td>
 <td>LVCMOS33</td>
 <td>NA</td>
 <td>UP</td>
@@ -2109,7 +2147,7 @@ Generate output files:
 </tr>
 <tr>
 <td class="label">88/3</td>
-<td>-</td>
+<td>btn_cw</td>
 <td>in</td>
 <td>IOR30[A]</td>
 <td>MODE0</td>
@@ -2120,13 +2158,13 @@ Generate output files:
 <td>NONE</td>
 <td>NA</td>
 <td>NA</td>
-<td>NA</td>
+<td>OFF</td>
 <td>NA</td>
 <td>3.3</td>
 </tr>
 <tr>
 <td class="label">87/3</td>
-<td>-</td>
+<td>btn_ccw</td>
 <td>in</td>
 <td>IOR30[B]</td>
 <td>MODE1</td>
@@ -2137,7 +2175,7 @@ Generate output files:
 <td>NONE</td>
 <td>NA</td>
 <td>NA</td>
-<td>NA</td>
+<td>OFF</td>
 <td>NA</td>
 <td>3.3</td>
 </tr>

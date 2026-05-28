@@ -1,7 +1,9 @@
 GowinSynthesis start
 Running parser ...
 Analyzing Verilog file '/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v'
-Compiling module 'forklift_top'("/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v":5)
+Compiling module 'forklift_top'("/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v":8)
+WARN  (EX3791) : Expression size 21 truncated to fit in target size 20("/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v":52)
+WARN  (EX3791) : Expression size 32 truncated to fit in target size 20("/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v":57)
 NOTE  (EX0101) : Current top module is "forklift_top"
 [5%] Running netlist conversion ...
 Running device independent optimization ...

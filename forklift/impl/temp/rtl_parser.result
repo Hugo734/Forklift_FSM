@@ -1,10 +1,10 @@
 [
  {
   "InstFile" : "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v",
-  "InstLine" : 5,
+  "InstLine" : 8,
   "InstName" : "forklift_top",
   "ModuleFile" : "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v",
-  "ModuleLine" : 5,
+  "ModuleLine" : 8,
   "ModuleName" : "forklift_top"
  }
 ]
