@@ -27,9 +27,9 @@ end
 //   1500 µs = 40,500 cycles  →  90° (centre)
 //   2500 µs = 67,500 cycles  →  180°
 localparam [19:0] PERIOD = 20'd539_999;
-localparam [19:0] PW_MIN = 20'd13_500;
-localparam [19:0] PW_MAX = 20'd67_500;
-localparam [19:0] CENTER = 20'd40_500;
+localparam [19:0] PW_MIN = 20'd8_100;    // 300 µs — servo physical end
+localparam [19:0] PW_MAX = 20'd81_000;   // 3000 µs — servo physical end
+localparam [19:0] CENTER = 20'd40_500;   // 1500 µs — 90°
 localparam [19:0] STEP   = 20'd270;
 
 // PWM counter
