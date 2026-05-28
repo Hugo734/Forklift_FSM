@@ -1,23 +1,7 @@
 GowinSynthesis start
 Running parser ...
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/forklift_top.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/pid_controller.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/pwm_gen.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/quad_decoder.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/soft_limits.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/spi_slave.v'
-Analyzing Verilog file '/home/champagnepapi/Documents/forklift/forklift/uart_tx.v'
-Compiling module 'forklift_top'("/home/champagnepapi/Documents/forklift/forklift/forklift_top.v":6)
-Compiling module 'quad_decoder'("/home/champagnepapi/Documents/forklift/forklift/quad_decoder.v":12)
-Compiling module 'spi_slave'("/home/champagnepapi/Documents/forklift/forklift/spi_slave.v":20)
-Compiling module 'pid_controller'("/home/champagnepapi/Documents/forklift/forklift/pid_controller.v":17)
-Compiling module 'soft_limits'("/home/champagnepapi/Documents/forklift/forklift/soft_limits.v":17)
-Compiling module 'pwm_gen'("/home/champagnepapi/Documents/forklift/forklift/pwm_gen.v":18)
-Compiling module 'uart_tx'("/home/champagnepapi/Documents/forklift/forklift/uart_tx.v":6)
-WARN  (EX3791) : Expression size 4 truncated to fit in target size 3("/home/champagnepapi/Documents/forklift/forklift/uart_tx.v":80)
-WARN  (EX3791) : Expression size 5 truncated to fit in target size 4("/home/champagnepapi/Documents/forklift/forklift/uart_tx.v":101)
-WARN  (EX3791) : Expression size 5 truncated to fit in target size 4("/home/champagnepapi/Documents/forklift/forklift/uart_tx.v":113)
-WARN  (EX3791) : Expression size 5 truncated to fit in target size 4("/home/champagnepapi/Documents/forklift/forklift/uart_tx.v":125)
+Analyzing Verilog file '/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v'
+Compiling module 'forklift_top'("/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.v":5)
 NOTE  (EX0101) : Current top module is "forklift_top"
 [5%] Running netlist conversion ...
 Running device independent optimization ...
@@ -35,8 +19,6 @@ Running technical mapping ...
 [75%] Tech-Mapping Phase 2 completed
 [80%] Tech-Mapping Phase 3 completed
 [90%] Tech-Mapping Phase 4 completed
-WARN  (NL0002) : The module "soft_limits" instantiated to "u_limits" is swept in optimizing("/home/champagnepapi/Documents/forklift/forklift/forklift_top.v":126)
-WARN  (NL0002) : The module "pid_controller" instantiated to "u_pid" is swept in optimizing("/home/champagnepapi/Documents/forklift/forklift/forklift_top.v":113)
-[95%] Generate netlist file "/home/champagnepapi/Documents/forklift/forklift/impl/gwsynthesis/forklift.vg" completed
-[100%] Generate report file "/home/champagnepapi/Documents/forklift/forklift/impl/gwsynthesis/forklift_syn.rpt.html" completed
+[95%] Generate netlist file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/gwsynthesis/forklift.vg" completed
+[100%] Generate report file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/gwsynthesis/forklift_syn.rpt.html" completed
 GowinSynthesis finish

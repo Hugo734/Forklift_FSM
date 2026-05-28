@@ -1,8 +1,8 @@
--d /home/champagnepapi/Documents/forklift/forklift/impl/gwsynthesis/forklift.vg
+-d /home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/gwsynthesis/forklift.vg
 -p GW2AR-18C-QFN88-8
 -pn GW2AR-LV18QN88C8/I7
--cst /home/champagnepapi/Documents/forklift/forklift/forklift_top.cst
--cfg /home/champagnepapi/Documents/forklift/forklift/impl/pnr/device.cfg
+-cst /home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.cst
+-cfg /home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/device.cfg
 -bit
 -tr
 -ph

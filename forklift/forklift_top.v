@@ -1,29 +1,14 @@
 // ============================================================
-//  forklift_top.v  —  Scale forklift motor controller
-//  Tang Nano 20K (GW2AR-18, 27MHz)
-//  Includes UART debug output of encoder position @ 115200
+//  forklift_top.v  —  Tower Pro MG90S diagnosis (tope a tope)
+//  Tang Nano 20K (GW2AR-18, 27 MHz)
 // ============================================================
 module forklift_top (
     input  wire clk,
-
-    input  wire enc_a,      // pin 25
-    input  wire enc_b,      // pin 26
-
-    input  wire spi_clk,    // pin 32
-    input  wire spi_cs_n,   // pin 33
-    input  wire spi_mosi,   // pin 34
-    output wire spi_miso,   // pin 35
-
-    output wire ena,        // pin 72
-    output wire in1,        // pin 28
-    output wire in2,        // pin 29
-
-    output wire uart_tx_pin // pin 17 → TX del Tang Nano (via BL616)
+    output wire servo_pwm
 );
-
-// ── Power-on reset ────────────────────────────────────────────
-reg [16:0] por_cnt;
-reg        rst_n;
+// ── Power-on reset (~4.8 ms) ─────────────────────────────────
+reg [16:0] por_cnt = 17'd0;
+reg        rst_n   = 1'b0;
 always @(posedge clk) begin
     if (por_cnt[16]) rst_n <= 1'b1;
     else begin
@@ -31,97 +16,40 @@ always @(posedge clk) begin
         por_cnt <= por_cnt + 1'b1;
     end
 end
-
-// ── Internal signals ──────────────────────────────────────────
-wire signed [31:0] position;
-wire               pos_valid;
-wire signed [15:0] target_pos;
-wire        [7:0]  kp, ki, kd;
-wire signed [15:0] limit_hi, limit_lo;
-wire               reset_pos_cmd;
-wire               calibrate_mode;
-wire               new_cmd;
-wire signed [12:0] pid_out;
-wire               pid_valid;
-wire               limit_hit;
-wire               at_top, at_bottom;
-
-wire pos_rst_n = rst_n && !reset_pos_cmd;
-
-
-// ── Quadrature decoder ────────────────────────────────────────
-quad_decoder u_quad (
-    .clk      (clk),
-    .rst_n    (pos_rst_n),
-    .enc_a    (enc_a),
-    .enc_b    (enc_b),
-    .position (position),
-    .valid    (pos_valid)
-);
-
-// ── SPI slave ─────────────────────────────────────────────────
-spi_slave u_spi (
-    .clk            (clk),
-    .rst_n          (rst_n),
-    .sclk           (spi_clk),
-    .cs_n           (spi_cs_n),
-    .mosi           (spi_mosi),
-    .miso           (spi_miso),
-    .pos_readback   (position[15:0]),
-    .target_pos     (target_pos),
-    .kp             (kp),
-    .ki             (ki),
-    .kd             (kd),
-    .limit_hi       (limit_hi),
-    .limit_lo       (limit_lo),
-    .reset_pos      (reset_pos_cmd),
-    .calibrate_mode (calibrate_mode),
-    .new_cmd        (new_cmd)
-);
-
-// ── PID controller ────────────────────────────────────────────
-pid_controller u_pid (
-    .clk         (clk),
-    .rst_n       (rst_n),
-    .kp          (kp),
-    .ki          (ki),
-    .kd          (kd),
-    .current_pos (position),
-    .target_pos  (target_pos),
-    .pid_out     (pid_out),
-    .pid_valid   (pid_valid)
-);
-
-// ── Soft limits ───────────────────────────────────────────────
-soft_limits u_limits (
-    .clk       (clk),
-    .rst_n     (rst_n),
-    .position  (position),
-    .pid_out   (pid_out),
-    .limit_hi  (limit_hi),
-    .limit_lo  (limit_lo),
-    .limit_hit (limit_hit),
-    .at_top    (at_top),
-    .at_bottom (at_bottom)
-);
-
-// ── PWM generator ─────────────────────────────────────────────
-pwm_gen u_pwm (
-    .clk       (clk),
-    .rst_n     (rst_n),
-    .pid_out   (pid_out),
-    .limit_hit (limit_hit),
-    .ena       (ena),
-    .in1       (in1),
-    .in2       (in2)
-);
-
-// ── UART debug: transmite posicion cada 100ms ─────────────────
-uart_tx u_uart (
-    .clk      (clk),
-    .rst_n    (rst_n),
-    .position (position),
-    .tx       (uart_tx_pin)
-);
-
+// ── Servo PWM — 50 Hz, 20 ms period @ 27 MHz ─────────────────
+localparam [19:0] PERIOD     = 20'd539_999;
+localparam [19:0] PW_OUT_0   = 20'd27_000;  // 1.00 ms → 0°
+localparam [19:0] PW_OUT_360 = 20'd54_000;  // 2.00 ms → 180°
+localparam [26:0] HOLD       = 27'd27_000_000;  // 1 s por paso
+// ── PWM counter ───────────────────────────────────────────────
+reg [19:0] pwm_cnt = 20'd0;
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) pwm_cnt <= 20'd0;
+    else        pwm_cnt <= (pwm_cnt == PERIOD) ? 20'd0 : pwm_cnt + 1'b1;
+end
+// ── Position sequencer ────────────────────────────────────────
+reg [ 0:0] seq_step    = 1'd0;
+reg [26:0] seq_cnt     = 27'd0;
+reg [19:0] pulse_width = PW_OUT_0;
+always @(posedge clk or negedge rst_n) begin
+    if (!rst_n) begin
+        seq_step    <= 1'd0;
+        seq_cnt     <= 27'd0;
+        pulse_width <= PW_OUT_0;
+    end else begin
+        if (seq_cnt == HOLD - 1) begin
+            seq_cnt  <= 27'd0;
+            seq_step <= ~seq_step;
+        end else begin
+            seq_cnt <= seq_cnt + 1'b1;
+        end
+        case (seq_step)
+            1'd0: pulse_width <= PW_OUT_0;
+            1'd1: pulse_width <= PW_OUT_360;
+            default: pulse_width <= PW_OUT_0;
+        endcase
+    end
+end
+// ── PWM output ────────────────────────────────────────────────
+assign servo_pwm = (pwm_cnt < pulse_width);
 endmodule

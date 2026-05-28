@@ -1,7 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Module name="forklift_top" Register="28" Lut="48" T_Register="256(28)" T_Alu="37(0)" T_Lut="1703(48)">
- <SubModule name="u_quad" Register="54" Lut="138" T_Register="54(54)" T_Lut="138(138)"/>
- <SubModule name="u_spi" Register="55" Lut="30" T_Register="55(55)" T_Lut="30(30)"/>
- <SubModule name="u_pwm" Register="26" Alu="37" Lut="49" T_Register="26(26)" T_Alu="37(37)" T_Lut="49(49)"/>
- <SubModule name="u_uart" Register="93" Lut="1438" T_Register="93(93)" T_Lut="1438(1438)"/>
-</Module>
+<Module name="forklift_top" Register="63" Alu="21" Lut="91" T_Register="63(63)" T_Alu="21(21)" T_Lut="91(91)"/>

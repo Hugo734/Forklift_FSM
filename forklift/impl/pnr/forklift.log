@@ -1,7 +1,7 @@
-Reading netlist file: "/home/champagnepapi/Documents/forklift/forklift/impl/gwsynthesis/forklift.vg"
-Parsing netlist file "/home/champagnepapi/Documents/forklift/forklift/impl/gwsynthesis/forklift.vg" completed
+Reading netlist file: "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/gwsynthesis/forklift.vg"
+Parsing netlist file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/gwsynthesis/forklift.vg" completed
 Processing netlist completed
-Reading constraint file: "/home/champagnepapi/Documents/forklift/forklift/forklift_top.cst"
+Reading constraint file: "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/forklift_top.cst"
 Physical Constraint parsed completed
 Running placement......
 [10%] Placement Phase 0 completed
@@ -22,10 +22,10 @@ Bitstream generation in progress......
 Bitstream generation completed
 Running power analysis......
 [100%] Power analysis completed
-Generate file "/home/champagnepapi/Documents/forklift/forklift/impl/pnr/forklift.power.html" completed
-Generate file "/home/champagnepapi/Documents/forklift/forklift/impl/pnr/forklift.pin.html" completed
-Generate file "/home/champagnepapi/Documents/forklift/forklift/impl/pnr/forklift.rpt.html" completed
-Generate file "/home/champagnepapi/Documents/forklift/forklift/impl/pnr/forklift.rpt.txt" completed
-Generate file "/home/champagnepapi/Documents/forklift/forklift/impl/pnr/forklift.tr.html" completed
-Mon May 25 18:03:19 2026
+Generate file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/forklift.power.html" completed
+Generate file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/forklift.pin.html" completed
+Generate file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/forklift.rpt.html" completed
+Generate file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/forklift.rpt.txt" completed
+Generate file "/home/champagnepapi/Puzzlebot-Challenge-/src/forklift_fsm/forklift/impl/pnr/forklift.tr.html" completed
+Wed May 27 22:39:52 2026
 
